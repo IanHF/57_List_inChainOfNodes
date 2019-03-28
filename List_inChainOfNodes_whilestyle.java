@@ -1,29 +1,60 @@
+/**
+  Represent a list, implemented in a chain of nodes
+ */
+//added tweaks done by me and kyle on wednesday - 3/28/19
+
 public class List_inChainOfNodes_whilestyle{
-  private Node hRef;
-    /**Construct an empty list*/
-  public List_inChainOfNodes(){
-    hRef = new Node("Head of list", null);}
-    /**@return the number of elements in this list*/
+  private Node headReference;
+
+    /**
+      Construct an empty list
+     */
+  public List_inChainOfNodes_whilestyle(){
+    headReference = new Node("Head of list", null);
+  }
+
+    /**
+      @return the number of elements in this list
+     */
   public int size() {
     int size = 0;
-    Node currentRef = hRef.getRefToNextNode();
-    while(currentRef instanceof Node){size++; currentRef = currentRef.getRefToNextNode();}
-    return size;}    
-     /**@return a string representation of this list format: # elements [element0,element1,element2,] */
-  public String toString() {
-    String retString = "elements [";
-    Node currentRef = hRef.getRefToNextNode();
-    while(currentRef instanceof Node){retString += currentRef.toString() + ", "; currentRef = currentRef.getRefToNextNode();}
-    return retString + "]";}
-    /**Append @value to the head of this list. @return true, in keeping with conventions yet to be discussed*/
-  public boolean addAsHead( Object val) {
-    Node toAddNode = new Node(val, headReference.getReferenceToNextNode());
-    headReference.setReferenceToNextNode(toAddNode);
-    return true;
+    Node currentReference = headReference.getReferenceToNextNode();
+    while(currentReference instanceof Node){
+      size++;
+      currentReference = currentReference.getReferenceToNextNode();
+    }
+
+    return size;
   }
-  
-//CREDIT TO KYLE EDWARDS WHO DID THE CODE BELOW WITH ME IN CLASS ON 3/25/19
-  public Node get(int element){
+
+
+     /**
+       @return a string representation of this list,
+       format:
+           # elements [element0,element1,element2,]
+      */
+  public String toString() {
+    String retString = "[";
+    Node currentReference = headReference.getReferenceToNextNode();
+    while(currentReference instanceof Node){
+      retString += currentReference.getCargoReference().toString() + ", ";
+      currentReference = currentReference.getReferenceToNextNode();
+    }
+    return retString + "]";
+  }
+
+
+    /**
+      Append @value to the head of this list.
+
+      @return true, in keeping with conventions yet to be discussed
+     */
+  public boolean addAsHead( Object val) {
+    return add(val, 0);
+  }
+
+  private Node getNode(int element){
+    if (element < 0) return headReference;
     Node currentNode = headReference.getReferenceToNextNode();
     for(int x = 0; x < element; x++){
       currentNode = currentNode.getReferenceToNextNode();
@@ -32,21 +63,28 @@ public class List_inChainOfNodes_whilestyle{
     return currentNode;
   }
 
-  public void set(Object val, int position){
-    Node currentNode = new Node(val, get(position).getReferenceToNextNode());
-    get(position-1).setReferenceToNextNode(currentNode);
+  public Object get(int element){
+    return getNode(element).getCargoReference();
+  }
+
+  public Object set(Object val, int position){
+    Node currentNode = getNode(position);
+    Object toReturn = currentNode.getCargoReference();
+    Node newNode = new Node(val, currentNode.getReferenceToNextNode());
+    getNode(position-1).setReferenceToNextNode(newNode);
+    return toReturn;
   }
 
   public boolean add(Object val, int position){
-    Node currentNode = get(position);
-    Node newNode = new Node(val, currentNode.getReferenceToNextNode());
-    currentNode.setReferenceToNextNode(newNode);
+    Node prevNode = getNode(position-1);
+    Node newNode = new Node(val, prevNode.getReferenceToNextNode());
+    prevNode.setReferenceToNextNode(newNode);
     return true;
   }
 
   public void remove(int position){
-    Node prevNode = ( (position == 0) ? headReference : get(position-1));
-    Node newNode = get(position);
+    Node prevNode = getNode(position-1);
+    Node newNode = getNode(position+1);
 
     prevNode.setReferenceToNextNode(newNode);
   }
